@@ -120,8 +120,13 @@ public class CodeDiff {
             CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
             newTreeIter.reset(reader, head);
 
-            //  对比差异
-            List<DiffEntry> diffs = git.diff().setOldTree(oldTreeIter).setNewTree(newTreeIter).setShowNameAndStatusOnly(true).call();
+            //  对比差异 比较两个Git树对象之间的差异,只获取文件名和状态信息,而不获取具体的差异内容,返回一个包含差异信息的列表
+            // 每个DiffEntry对象代表一个文件的差异信息
+            List<DiffEntry> diffs = git.diff()
+                    .setOldTree(oldTreeIter)
+                    .setNewTree(newTreeIter)
+                    .setShowNameAndStatusOnly(true)
+                    .call();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             DiffFormatter df = new DiffFormatter(out);
             //设置比较器为忽略空白字符对比（Ignores all whitespace）
@@ -220,6 +225,7 @@ public class CodeDiff {
             }
             /*  修改类型  */
             //  获取文件差异位置，从而统计差异的行数，如增加行数，减少行数
+            // DiffEntry包含多个Edit对象，每个Edit对象代表其中一段的差异
             FileHeader fileHeader = df.toFileHeader(diffEntry);
             List<int[]> addLines = new ArrayList<int[]>();
             List<int[]> delLines = new ArrayList<int[]>();
